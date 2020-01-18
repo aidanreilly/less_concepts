@@ -697,18 +697,24 @@ g.key = function(x,y,z)
     g:refresh()
   end
   if y == 6 and z == 1 then
+    for i=1,8 do
+      g:led(i,4,0)
+      g:led(i,5,0)
+    end
     g:led(x,y,z*15)
-    g:refresh()
-    voice[2].octave = x-4
-    bang()
+    voice[1].octave = x-4
     redraw()
+    g:refresh()
   end
   if y == 7 and z == 1 then
+    for i=1,8 do
+      g:led(i,4,0)
+      g:led(i,5,0)
+    end
     g:led(x,y,z*15)
-    g:refresh()
     voice[2].octave = x-4
-    bang()
     redraw()
+    g:refresh()
   end
   -- g64 edit: squeeze the random buttons together
   if y == 3 and z == 1 then
