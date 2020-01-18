@@ -668,12 +668,13 @@ g.key = function(x,y,z)
     bang()
     redraw()
   end
-  if y == 1 and x > 9 and z == 1 then
+  -- g64 edit move oct 1 to row 6
+  if y == 6 and x < 8 and z == 1 then
     for i=10,16 do
       g:led(i,1,0)
     end
     g:led(x,y,z*15)
-    voice[1].octave = x-13
+    voice[1].octave = x-4
     redraw()
     g:refresh()
   end
@@ -684,17 +685,19 @@ g.key = function(x,y,z)
     bang()
     redraw()
   end
-  if y == 2 and x > 9 and z == 1 then
+  -- g64 edit: move oct 2 to row 7
+  if y == 7 and x > 8 and z == 1 then
     for i=10,16 do
       g:led(i,2,0)
     end
     g:led(x,y,z*15)
-    voice[2].octave = x-13
+    voice[2].octave = x-4
     redraw()
     g:refresh()
   end
+  -- g64 edit: reduce low and high scale ref to a single column each
   if y == 4 and z == 1 then
-    for i=1,16 do
+    for i=1,8 do
       g:led(i,4,0)
       g:led(i,5,0)
     end
@@ -704,35 +707,16 @@ g.key = function(x,y,z)
     g:refresh()
   end
   if y == 5 and z == 1 then
-    for i=1,16 do
+    for i=1,8 do
       g:led(i,4,0)
       g:led(i,5,0)
-    end
-    g:led(x,y,z*15)
-    new_low = x+16
-    redraw()
-    g:refresh()
-  end
-  if y == 6 and z == 1 then
-    for i=1,16 do
-      g:led(i,6,0)
-      g:led(i,7,0)
     end
     g:led(x,y,z*15)
     new_high = x
     redraw()
     g:refresh()
   end
-  if y == 7 and z == 1 then
-    for i=1,16 do
-      g:led(i,6,0)
-      g:led(i,7,0)
-    end
-    g:led(x,y,z*15)
-    new_high = x+16
-    redraw()
-    g:refresh()
-  end
+  -- g64 edit: squeeze the random buttons together
   if y == 3 and z == 1 then
     if x == 1 then
       seed = math.random(0,255)
@@ -740,42 +724,18 @@ g.key = function(x,y,z)
     elseif x == 2 then
       rule = math.random(0,255)
       new_rule = rule
-    elseif x == 4 then
+    elseif x == 3 then
       voice[1].bit = math.random(0,8)
-    elseif x == 5 then
+    elseif x == 4 then
       voice[2].bit = math.random(0,8)
-    elseif x == 7 or x == 8 or x == 10 or x == 11 then
-      if x == 7 then
-        new_low = math.random(1,29)
-      end
-      if x == 8 then
-        new_high = math.random(1,29)
-      end
-      if x == 10 then
+    elseif x == 5 then
+      new_low = math.random(1,29)
+    elseif x == 6 then
+      new_high = math.random(1,29)
+    elseif x == 7 then
         voice[1].octave = math.random(-2,2)
-      end
-      if x == 11 then
+    elseif x == 8 then
         voice[2].octave = math.random(-2,2)
-      end
-      g:all(0)
-      g:led(voice[1].octave+13,1,15)
-      g:led(voice[2].octave+13,2,15)
-      if new_low < 17 then
-        g:led(new_low,4,15)
-      else
-        g:led(new_low-16,5,15)
-      end
-      if new_high < 17 then
-        g:led(new_high,6,15)
-      else
-        g:led(new_high-16,7,15)
-      end
-    elseif x == 10 then
-      voice[1].octave = math.random(-2,2)
-    elseif x == 11 then
-      voice[2].octave = math.random(-2,2)
-    elseif x == 16 then
-      randomize_all()
     end
     bang()
     redraw()
@@ -783,21 +743,21 @@ g.key = function(x,y,z)
     g:refresh()
   end
   if y == 8 and z == 1 then
-    if x < 9 and x < preset_count+1 then
+    if x < 7 and x < preset_count+1 then
       new_preset_unpack(x)
       selected_preset = x
       grid_redraw()
-    elseif x == 14 and preset_count > 0 then
+    elseif x == 6 and preset_count > 0 then
       preset_remove(selected_preset)
       grid_constant()
-    elseif x == 15 then
+    elseif x == 7 then
       preset_count = 0
       for i=1,8 do
         g:led(i,8,0)
       end
       selected_preset = 0
       grid_redraw()
-    elseif x == 16 then
+    elseif x == 8 then
       if preset_count < 8 then
       preset_count = preset_count + 1
       new_preset_pack(preset_count)
@@ -825,34 +785,28 @@ function grid_redraw()
   g:led(5,3,4)
   g:led(7,3,4)
   g:led(8,3,4)
-  g:led(10,3,4)
-  g:led(11,3,4)
-  g:led(16,3,4)
   for i=1,preset_count do
     g:led(i,8,6)
   end
   g:led(selected_preset,8,15)
-  g:led(14,8,2)
-  g:led(15,8,4)
-  g:led(16,8,6)
-  g:led(voice[1].octave+13,1,15)
-  g:led(voice[2].octave+13,2,15)
+  g:led(voice[1].octave+4,1,15)
+  g:led(voice[2].octave+4,2,15)
   g:refresh()
 end
 
 function grid_constant()
   g:all(0)
-  g:led(voice[1].octave+13,1,15)
-  g:led(voice[2].octave+13,2,15)
-  if new_low < 17 then
+  g:led(voice[1].octave+4,1,15)
+  g:led(voice[2].octave+4,2,15)
+  if new_low < 9 then
     g:led(new_low,4,15)
-  elseif new_low > 16 then
-    g:led(new_low-16,5,15)
+  elseif new_low > 8 then
+    g:led(new_low-8,5,15)
   end
-  if new_high < 17 then
+  if new_high < 9 then
     g:led(new_high,6,15)
-  elseif new_high > 16 then
-    g:led(new_high-16,7,15)
+  elseif new_high > 8 then
+    g:led(new_high-8,7,15)
   end
   grid_redraw()
   g:refresh()

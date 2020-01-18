@@ -8,3 +8,6 @@ PLEASE MAKE SURE YOU RENAME THE FOLDER `less_concepts` WHEN LOADING TO NORNS <3
 MIDI channels are assignable for voice 1 and voice 2, in the params. you can also transpose + change tempo there to fine tune for different MIDI devices.
 
 Video tutorial: https://youtu.be/AHuZm-aHN6k
+
+***
+oootini edit for grid 64
