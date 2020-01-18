@@ -668,32 +668,12 @@ g.key = function(x,y,z)
     bang()
     redraw()
   end
-  -- g64 edit move oct 1 to row 6
-  if y == 6 and x < 8 and z == 1 then
-    for i=10,16 do
-      g:led(i,1,0)
-    end
-    g:led(x,y,z*15)
-    voice[1].octave = x-4
-    redraw()
-    g:refresh()
-  end
   if y == 2 and x < 9 then
     g:led(x,y,z*15)
     g:refresh()
     voice[2].bit = 9-x
     bang()
     redraw()
-  end
-  -- g64 edit: move oct 2 to row 7
-  if y == 7 and x > 8 and z == 1 then
-    for i=10,16 do
-      g:led(i,2,0)
-    end
-    g:led(x,y,z*15)
-    voice[2].octave = x-4
-    redraw()
-    g:refresh()
   end
   -- g64 edit: reduce low and high scale ref to a single column each
   if y == 4 and z == 1 then
@@ -712,9 +692,23 @@ g.key = function(x,y,z)
       g:led(i,5,0)
     end
     g:led(x,y,z*15)
-    new_high = x
+    new_low = x+16
     redraw()
     g:refresh()
+  end
+  if y == 6 and z == 1 then
+    g:led(x,y,z*15)
+    g:refresh()
+    voice[2].octave = x-4
+    bang()
+    redraw()
+  end
+  if y == 7 and z == 1 then
+    g:led(x,y,z*15)
+    g:refresh()
+    voice[2].octave = x-4
+    bang()
+    redraw()
   end
   -- g64 edit: squeeze the random buttons together
   if y == 3 and z == 1 then
@@ -737,10 +731,10 @@ g.key = function(x,y,z)
     elseif x == 8 then
         voice[2].octave = math.random(-2,2)
     end
+    g:led(x,y,z*15)
+    g:refresh()
     bang()
     redraw()
-    grid_redraw()
-    g:refresh()
   end
   if y == 8 and z == 1 then
     if x < 7 and x < preset_count+1 then
@@ -765,6 +759,10 @@ g.key = function(x,y,z)
       end
     end
   end
+  g:led(x,y,z*15)
+  g:refresh()
+  bang()
+  redraw()
 end
 
 -- hardware: grid redraw
