@@ -356,8 +356,8 @@ function init()
   g = grid.connect()
   g:led(new_low,4,15)
   g:led(new_high,6,15)
-  g:led(voice[1].octave+13,1,15)
-  g:led(voice[2].octave+13,2,15)
+  g:led(voice[1].octave+4,6,15)
+  g:led(voice[2].octave+4,7,15)
   grid_redraw()
   g:refresh()
   params:add_number("set", "set", 1,100,1)
@@ -545,7 +545,7 @@ if screen_focus % 2 == 1 then
         voice[1].octave = math.min(3,(math.max(voice[1].octave + d,-3)))
         for i=10,16 do
           g:led(i,1,0)
-          g:led(voice[1].octave+13,1,15)
+          g:led(voice[1].octave+4,6,15)
           g:refresh()
         end
       elseif edit == "lc_bits" then
@@ -577,7 +577,7 @@ if screen_focus % 2 == 1 then
         voice[2].octave = math.min(3,(math.max(voice[2].octave + d,-3)))
         for i=10,16 do
           g:led(i,2,0)
-          g:led(voice[2].octave+13,2,15)
+          g:led(voice[2].octave+4,7,15)
           g:refresh()
         end
       elseif edit == "lc_bits" then
@@ -682,7 +682,7 @@ g.key = function(x,y,z)
       g:led(i,5,0)
     end
     g:led(x,y,z*15)
-    new_low = x
+    new_low = x*2
     redraw()
     g:refresh()
   end
@@ -692,7 +692,7 @@ g.key = function(x,y,z)
       g:led(i,5,0)
     end
     g:led(x,y,z*15)
-    new_low = x+16
+    new_high = x*2
     redraw()
     g:refresh()
   end
@@ -736,11 +736,15 @@ g.key = function(x,y,z)
         voice[1].octave = math.random(-2,2)
     elseif x == 8 then
         voice[2].octave = math.random(-2,2)
-    end
-    g:led(x,y,z*15)
+      end
+      g:led(x,y,z*15)
+      g:refresh()
+      g:led(voice[1].octave+4,6,15)
+      g:led(voice[2].octave+4,7,15)
+    --bang()
+    --redraw()
+    --grid_redraw()
     g:refresh()
-    bang()
-    redraw()
   end
   if y == 8 and z == 1 then
     if x < 7 and x < preset_count+1 then
@@ -765,10 +769,6 @@ g.key = function(x,y,z)
       end
     end
   end
-  g:led(x,y,z*15)
-  g:refresh()
-  bang()
-  redraw()
 end
 
 -- hardware: grid redraw
@@ -776,6 +776,7 @@ function grid_redraw()
   for i=1,8 do
     g:led(i,1,0)
     g:led(i,2,0)
+    g:led(i,3,0)
   end
   if seed_as_binary[voice[1].bit] == 1 then
     g:led(9-voice[1].bit,1,15)
@@ -789,28 +790,38 @@ function grid_redraw()
   g:led(5,3,4)
   g:led(7,3,4)
   g:led(8,3,4)
+  g:led(10,3,4)
+  g:led(11,3,4)
+  g:led(16,3,4)
   for i=1,preset_count do
     g:led(i,8,6)
   end
   g:led(selected_preset,8,15)
-  g:led(voice[1].octave+4,1,15)
-  g:led(voice[2].octave+4,2,15)
+  g:led(14,8,2)
+  g:led(15,8,4)
+  g:led(16,8,6)
+  for i=1,8 do
+    g:led(i,6,0)
+    g:led(i,7,0)
+  end
+  g:led(voice[1].octave+4,6,15)
+  g:led(voice[2].octave+4,7,15)
   g:refresh()
 end
 
 function grid_constant()
   g:all(0)
-  g:led(voice[1].octave+4,1,15)
-  g:led(voice[2].octave+4,2,15)
+  g:led(voice[1].octave+4,6,15)
+  g:led(voice[2].octave+4,7,15)
   if new_low < 9 then
     g:led(new_low,4,15)
   elseif new_low > 8 then
-    g:led(new_low-8,5,15)
+    g:led(new_low-8,4,15)
   end
   if new_high < 9 then
-    g:led(new_high,6,15)
+    g:led(new_high,5,15)
   elseif new_high > 8 then
-    g:led(new_high-8,7,15)
+    g:led(new_high-8,5,15)
   end
   grid_redraw()
   g:refresh()
