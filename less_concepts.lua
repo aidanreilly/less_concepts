@@ -77,6 +77,7 @@ edit_foci = {"seed/rule",
   "presets"}
 local edit = "seed/rule"
 local dd = 0
+local random_led = 1
 random_gate = {}
 for i = 1,4 do
   random_gate[i] = {}
@@ -662,7 +663,6 @@ g = grid.connect()
 -- hardware: grid event (eg 'what happens when a button is pressed')
 g.key = function(x,y,z)
   if y == 1 and x < 9 then
-    g:led(x,y,z*15)
     g:refresh()
     voice[1].bit = 9-x
     bang()
@@ -718,6 +718,7 @@ g.key = function(x,y,z)
   end
   -- g64 edit: squeeze the random buttons together
   if y == 3 and z == 1 then
+    random_led = x
     if x == 1 then
       seed = math.random(0,255)
       new_seed = seed
@@ -747,6 +748,12 @@ g.key = function(x,y,z)
     g:refresh()
   end
   if y == 8 and z == 1 then
+    for i=1,8 do
+      g:led(i,8,0)
+    end
+    g:led(x,y,z*15)
+    redraw()
+    g:refresh()
     if x < 7 and x < preset_count+1 then
       new_preset_unpack(x)
       selected_preset = x
@@ -806,6 +813,7 @@ function grid_redraw()
   end
   g:led(voice[1].octave+4,6,15)
   g:led(voice[2].octave+4,7,15)
+  g:led(random_led,3,15)
   g:refresh()
 end
 
