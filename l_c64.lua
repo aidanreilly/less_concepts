@@ -77,6 +77,7 @@ edit_foci = {"seed/rule",
   "presets"}
 local edit = "seed/rule"
 local dd = 0
+local random_led = 1
 random_gate = {}
 for i = 1,4 do
   random_gate[i] = {}
@@ -677,20 +678,10 @@ g = grid.connect()
 -- hardware: grid event (eg 'what happens when a button is pressed')
 g.key = function(x,y,z)
   if y == 1 and x < 9 then
-    g:led(x,y,z*15)
     g:refresh()
     voice[1].bit = 9-x
     bang()
     redraw()
-  end
-  if y == 1 and x > 9 and z == 1 then
-    for i=10,16 do
-      g:led(i,1,0)
-    end
-    g:led(x,y,z*15)
-    voice[1].octave = x-13
-    redraw()
-    g:refresh()
   end
   if y == 2 and x < 9 then
     g:led(x,y,z*15)
@@ -706,7 +697,7 @@ g.key = function(x,y,z)
       g:led(i,5,0)
     end
     g:led(x,y,z*15)
-    new_low = x
+    new_low = x*2
     redraw()
     g:refresh()
   end
@@ -716,7 +707,7 @@ g.key = function(x,y,z)
       g:led(i,5,0)
     end
     g:led(x,y,z*15)
-    new_low = x+16
+    new_high = x*2
     redraw()
     g:refresh()
   end
@@ -726,7 +717,7 @@ g.key = function(x,y,z)
       g:led(i,5,0)
     end
     g:led(x,y,z*15)
-    new_high = x
+    voice[1].octave = x-4
     redraw()
     g:refresh()
   end
@@ -736,12 +727,13 @@ g.key = function(x,y,z)
       g:led(i,5,0)
     end
     g:led(x,y,z*15)
-    new_high = x+16
+    voice[2].octave = x-4
     redraw()
     g:refresh()
   end
   -- g64 edit: squeeze the random buttons together
   if y == 3 and z == 1 then
+    random_led = x
     if x == 1 then
       seed = math.random(0,255)
       new_seed = seed
@@ -752,45 +744,31 @@ g.key = function(x,y,z)
       voice[1].bit = math.random(0,8)
     elseif x == 4 then
       voice[2].bit = math.random(0,8)
-    elseif x == 5 or x == 6 or x == 7 or x == 8 then
-      if x == 5 then
-        new_low = math.random(1,29)
-      end
-      if x == 6 then
-        new_high = math.random(1,29)
-      end
-      if x == 7 then
+    elseif x == 5 then
+      new_low = math.random(1,29)
+    elseif x == 6 then
+      new_high = math.random(1,29)
+    elseif x == 7 then
         voice[1].octave = math.random(-2,2)
-      end
-      if x == 8 then
+    elseif x == 8 then
         voice[2].octave = math.random(-2,2)
       end
-      g:all(0)
-      g:led(voice[1].octave+13,1,15)
-      g:led(voice[2].octave+13,2,15)
-      if new_low < 17 then
-        g:led(new_low,4,15)
-      else
-        g:led(new_low-16,5,15)
-      end
-      if new_high < 17 then
-        g:led(new_high,6,15)
-      else
-        g:led(new_high-16,7,15)
-      end
-    elseif x == 10 then
-      voice[1].octave = math.random(-2,2)
-    elseif x == 11 then
-      voice[2].octave = math.random(-2,2)
-    elseif x == 16 then
-      randomize_all()
-    end
-    bang()
-    redraw()
-    grid_redraw()
+      g:led(x,y,z*15)
+      g:refresh()
+      g:led(voice[1].octave+4,6,15)
+      g:led(voice[2].octave+4,7,15)
+    --bang()
+    --redraw()
+    --grid_redraw()
     g:refresh()
   end
   if y == 8 and z == 1 then
+    for i=1,8 do
+      g:led(i,8,0)
+    end
+    g:led(x,y,z*15)
+    redraw()
+    g:refresh()
     if x < 7 and x < preset_count+1 then
       new_preset_unpack(x)
       selected_preset = x
@@ -820,6 +798,7 @@ function grid_redraw()
   for i=1,8 do
     g:led(i,1,0)
     g:led(i,2,0)
+    g:led(i,3,0)
   end
   if seed_as_binary[voice[1].bit] == 1 then
     g:led(9-voice[1].bit,1,15)
@@ -843,9 +822,13 @@ function grid_redraw()
   g:led(14,8,2)
   g:led(15,8,4)
   g:led(16,8,6)
+  for i=1,8 do
+    g:led(i,6,0)
+    g:led(i,7,0)
+  end
   g:led(voice[1].octave+4,6,15)
   g:led(voice[2].octave+4,7,15)
-
+  g:led(random_led,3,15)
   g:refresh()
 end
 
